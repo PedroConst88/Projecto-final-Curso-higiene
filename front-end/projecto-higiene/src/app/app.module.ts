@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -21,6 +21,27 @@ import { DashboardComponent } from './components/views/dashboard/dashboard.compo
 import { VerifyEmailComponent } from './components/views/verify-email/verify-email.component';
 import { RegisterComponent } from './components/views/register/register.component';
 import { RegisterWorkersComponent } from './components/views/register-workers/register-workers.component';
+import { ProfileComponent } from './components/views/profile/profile.component';
+import { AddHousesComponent } from './components/views/add-houses/add-houses.component';
+import { AuthGuard } from './shared/guard/auth.guard';
+import { AdminGuard } from './shared/guard/admin.guard';
+import { ListHousesComponent } from './components/views/list-houses/list-houses.component';
+import { CardHousesComponent } from './components/layout/card-houses/card-houses.component';
+import {MatCardModule} from '@angular/material/card';
+import { FlexLayoutModule } from "@angular/flex-layout";
+import { FormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { FlatpickrModule } from 'angularx-flatpickr';
+import { CleaningService } from './shared/services/cleaning.service';
+import { HouseService } from './shared/services/house.service';
+import { AddCleaningComponent } from './components/layout/add-cleaning/add-cleaning.component';
+
 
 @NgModule({
   declarations: [
@@ -34,6 +55,11 @@ import { RegisterWorkersComponent } from './components/views/register-workers/re
     DashboardComponent,
     VerifyEmailComponent,
     RegisterWorkersComponent,
+    ProfileComponent,
+    AddHousesComponent,
+    ListHousesComponent,
+    CardHousesComponent,
+    AddCleaningComponent,
   ],
   imports: [
     BrowserModule,
@@ -42,9 +68,29 @@ import { RegisterWorkersComponent } from './components/views/register-workers/re
     AngularFirestoreModule,
     AngularFireStorageModule,
     AngularFireDatabaseModule,
-    AppRoutingModule
+    AppRoutingModule,
+    MatCardModule,
+    FlexLayoutModule,
+    FormsModule,
+    NgbModalModule,
+    BrowserAnimationsModule,
+    FlatpickrModule.forRoot(),
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory,
+    }),
+    NgbModule,
   ],
-  providers: [AuthService],
+  providers: [
+    DatePipe,
+    AuthService,
+    AuthGuard,
+    CleaningService,
+    AuthService,
+    HouseService,
+    AdminGuard
+  ],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

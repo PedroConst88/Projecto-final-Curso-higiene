@@ -1,12 +1,31 @@
 <nav class="navbar navbar-expand">
-    <a class="navbar-brand mb-4" routerLink="/">
-        <img src="../../assets/logo.png" alt="">
+  <div *ngIf="(authService.user$ | async) as user else redirectIntroPage">
+    <a class="navbar-brand mb-4" routerLink="/dashboard">
+      <img src="../../assets/logo.png" alt="">
     </a>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <a class="nav-link text-white" routerLink="/login">Torne-se cliente</a>
-        </li>
-      </ul>
-    </div>
+  </div>
+
+  <ng-template #redirectIntroPage>
+    <a class="navbar-brand mb-4" routerLink="/">
+      <img src="../../assets/logo.png" alt="">
+    </a>
+  </ng-template>
+
+  <ul class="navbar-nav ml-auto">
+  <div *ngIf="(authService.user$ | async) as user else loading">
+    <li *ngIf="user.roles.client" class="nav-item">
+      <a class="nav-link text-white" routerLink="/profile">Perfil</a>
+    </li>
+    <li *ngIf="user.roles.client" class="nav-item">
+      <a class="nav-link text-white" (click)="authService.SignOut()">Log out</a>
+    </li>
+  </div>
+  <ng-template #loading>
+    <li class="nav-item">
+      <a class="nav-link text-white" routerLink="/login">Torne-se cliente</a>
+    </li>
+  </ng-template>
+</ul>
+
+
 </nav>

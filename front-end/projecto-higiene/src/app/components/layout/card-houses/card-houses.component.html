@@ -1,0 +1,8 @@
+<mat-card>
+    <mat-card-content fxLayout="row">
+        <div (click)="houseService.loadHouse(houses)" fxFlex>
+            <h3>{{houses?.name}}</h3>
+        </div>
+        <i class="material-icons" (click)="houseService.deleteHouse(houses.hid)">delete</i>
+    </mat-card-content>
+</mat-card>

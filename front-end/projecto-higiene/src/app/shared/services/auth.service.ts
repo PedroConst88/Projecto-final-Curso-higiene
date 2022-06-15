@@ -1,36 +1,68 @@
 import { Injectable, NgZone } from '@angular/core';
-import { User } from '../services/user';
+import { Houses, User } from '../services/user';
 import * as auth from 'firebase/auth';
-import {Observable, of} from "rxjs";
+import {BehaviorSubject, defer, from, Observable, of, ReplaySubject} from "rxjs";
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import {
   AngularFirestore,
   AngularFirestoreDocument,
 } from '@angular/fire/compat/firestore';
 import { ResolveStart, Router } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
+import { delay, map, switchMap, take } from 'rxjs/operators';
+import { share } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  userData: any; // Save logged in user data
-  user$: Observable<User | null | undefined>;
+
+  user$!: Observable<User | null | undefined>;
+  dataPromise!: Promise<User>;
+
+
   constructor(
     public afs: AngularFirestore, // Inject Firestore service
     public afAuth: AngularFireAuth, // Inject Firebase auth service
     public router: Router,
     public ngZone: NgZone // NgZone service to remove outside scope warning
   ) {
-    /* Saving user data in localstorage when 
-    logged in and setting up null when logged out */
-    this.user$ = this.afAuth.authState.pipe(switchMap((user)=>{
-      if(user){
-        return this.afs.doc<User>(`users/${user.uid}`).valueChanges()
-      }else{
+
+    this.user$ =  this.afAuth.authState.pipe(switchMap((user) => {
+      if (user) {
+        return from(this.afs.doc<User>(`users/${user.uid}`).valueChanges());
+      } else {
         return of(null);
       }
     }));
+
+    /* Saving user data in localstorage when 
+    logged in and setting up null when logged out */
+
+/*    this.user$ = this.afAuth.authState.pipe(switchMap((user) => {
+      if (user) {
+        const tempUser = defer(() => this.getUser(user)) as Observable<User | null | undefined>
+        tempUser.pipe(switchMap((user) => {
+          user?.roles
+        }));
+        return tempUser;
+      } else {
+        return of(null);
+      }
+    }));
+    console.log('AQUI --------> ')*/
   }
+
+  async getUser(user: any): Promise<User | void> {
+    const docData = await this.afs.doc<User>(`users/${user.uid}`).get().toPromise()
+    .then((res) => {
+      return res?.data() as unknown as Promise<User>;
+    }).catch(err => {
+      console.log('something went wrong '+ err)
+    });
+    return docData;
+  }
+
+
+
   // Sign in with email/password
   SignIn(email: string, password: string) {
     return this.afAuth
@@ -92,10 +124,7 @@ export class AuthService {
       });
   }
   // Returns true when user is looged in and email is verified
-  get isLoggedIn(): boolean {
-    const user = JSON.parse(localStorage.getItem('user')!);
-    return user !== null && user.emailVerified !== false ? true : false;
-  }
+
 
   /* Setting up user data when sign in with username/password, 
   sign up with username/password and sign in with social auth  
@@ -110,7 +139,7 @@ export class AuthService {
       displayName: user.displayName,
       photoURL: user.photoURL,
       emailVerified: user.emailVerified,
-      roles: { client: true },
+      roles: {admin:false, client: true, worker:false },
     };
     return userRef.set(data, {
       merge: true,
@@ -127,7 +156,7 @@ export class AuthService {
       displayName: user.displayName,
       photoURL: user.photoURL,
       emailVerified: user.emailVerified,
-      roles: { worker: true },
+      roles: {admin:false, client: false, worker: true },
     };
     return userRef.set(data, {
       merge: true,
@@ -167,9 +196,30 @@ export class AuthService {
     return this.checkAuthorization(user, allowed);
   }
 
+
+  getHouses() : Observable<Houses[]>{
+    return this.user$.pipe(map((user:any)=>{
+      console.log(user?.uid);
+      return user?.houses;
+    }));
+  }
+
+
+  saveImage(){
+    
+  }
+
   // Sign out
   async SignOut() {
     await this.afAuth.signOut();
     return this.router.navigate(['login']);
   }
+
 }
+/**      if(user){
+        this.userData = this.afs.doc(`users/${user.uid}/${user.houses}`).valueChanges();
+      }else{
+        this.userData = of(null);
+      }});
+      
+      */

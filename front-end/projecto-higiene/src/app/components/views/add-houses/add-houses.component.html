@@ -1,0 +1,73 @@
+<section>
+  <div class="container">
+    <div>
+      <h1 class="h2">Add house details</h1>
+
+
+      <div class="form-row">
+        <div class="col-md-12 mb-3">
+          <label for="validationCustom03">Name</label>
+          <input type="text" class="form-control" id="validationCustom01" placeholder="name"  [(ngModel)]="houses.name" #name required>
+          <div class="invalid-feedback">
+            Please provide a valid Name.
+          </div>
+        </div>
+        <div class="col-md-12 mb-3">
+          <label for="validationCustom03">Size</label>
+          <input type="number" class="form-control" id="validationCustom02" placeholder="size" [(ngModel)]="houses.size" #size required>
+          <div class="invalid-feedback">
+            Please provide a valid size.
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="validationCustom03">Address</label>
+          <input type="text" class="form-control" id="validationCustom03" placeholder="address" [(ngModel)]="houses.address" #address required>
+          <div class="invalid-feedback">
+            Please provide a valid Address.
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="validationCustom04">city</label>
+          <input type="text" class="form-control" id="validationCustom04" placeholder="city" [(ngModel)]="houses.city" #city required>
+          <div class="invalid-feedback">
+            Please provide a city state.
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="validationCustom05">Zip</label>
+          <input type="number" class="form-control" id="validationCustom05" placeholder="Zip" [(ngModel)]="houses.postcode" #zip required>
+          <div class="invalid-feedback">
+            Please provide a valid zip.
+          </div>
+        </div>
+
+
+    </div>
+    <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-12">
+        <img src="/assets/housePlan.png" alt="HousePlan" />
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="input-group mb-3">
+          <label for="validationCustom06">numRoom</label>
+          <input type="number" value="0" min="0" max="100" step="1" placeholder="numRoom" [(ngModel)]="houses.numRoom" #numRoom required/>
+          <label for="validationCustom07">numBath</label>
+          <input type="number" value="0" min="0" max="100" step="1" placeholder="numBath" [(ngModel)]="houses.numBath" #numBath required/>
+          <label for="validationCustom08">numKitchen</label>
+          <input type="number" value="0" min="0" max="100" step="1" placeholder="numKitchen" [(ngModel)]="houses.numKitchen" #numKitchen required/>
+          <label for="validationCustom09">numGarden</label>
+          <input type="number" value="0" min="0" max="100" step="1" placeholder="numGarden" [(ngModel)]="houses.numGarden" #numGarden required/>
+          <label for="validationCustom10">numLiving</label>
+          <input type="number" value="0" min="0" max="100" step="1" placeholder="numLiving" [(ngModel)]="houses.numLiving" #numLiving required/>
+          <label for="validationCustom11">numDining</label>
+          <input type="number" value="0" min="0" max="100" step="1" placeholder="numDining" [(ngModel)]="houses.numDining" #numDining required/>
+          <label for="validationCustom12">numGarage</label> 
+          <input type="number" value="0" min="0" max="100" step="1" placeholder="numGarage" [(ngModel)]="houses.numGarage" #numGarage required/>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" style="background-color: #FFA07A;" type="submit" value="save" (click)="houseService.storeHouse(name.value, convertNumber(size.value), address.value, city.value, convertNumber(zip.value), convertNumber(numRoom.value), convertNumber(numBath.value), convertNumber(numKitchen.value), convertNumber(numGarden.value), convertNumber(numLiving.value), convertNumber(numDining.value), convertNumber(numGarage.value))">Guardar</button>
+
+      </div>
+    </div>
+  </div>
+</div>
+</section>

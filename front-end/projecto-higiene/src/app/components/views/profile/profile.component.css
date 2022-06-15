@@ -1,0 +1,8 @@
+.card-body{
+    height: 250px;
+    background-color: #6e6e6e;
+    border-radius: 5%;
+}
+.card{
+    border:none;
+}

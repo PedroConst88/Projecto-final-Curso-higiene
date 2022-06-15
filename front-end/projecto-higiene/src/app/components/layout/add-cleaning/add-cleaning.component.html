@@ -1,0 +1,43 @@
+
+  <div class="form-row">
+    <h1 class="h3 mb-3 font-weight-normal">Adicionar marcação</h1>
+    <div class="col-12">
+    <label for="title">Título: </label>
+    <input id="title" type="text" placeholder="title" #title>
+    </div>
+    <div class="col-12">
+    <label for="time">Data: </label>
+    <input
+    class="form-control"
+    type="text"
+    mwlFlatpickr
+    [altInput]="true"
+    [convertModelValue]="true"
+    [enableTime]="false"
+    minDate="today"
+    dateFormat="Y-m-dTH:i"
+    altFormat="F j, Y H:i"
+    placeholder="time"
+    #time/>
+</div>
+<div class="col-12">
+  <label for="time">Horário: </label>
+  <input
+  class="form-control"
+  type="text"
+  mwlFlatpickr
+  [altInput]="true"
+  [convertModelValue]="true"
+  [enableTime]="true"
+  minDate="today"
+  dateFormat="Y-m-dTH:i"
+  altFormat="F j, Y H:i"
+  placeholder="time"
+  #time/>
+</div>
+<div class="col-12">
+    <label for="notes">Notas: </label>
+    <input id="notes" type="text" placeholder="notes" #notes>
+</div>
+    <button class="btn btn-lg btn-primary btn-block" style="background-color: #FFA07A;" type="submit" value="SubmitCleaning" (click)="addEvent(title.value,time.value,notes.value);">Adicionar</button>
+  </div>
