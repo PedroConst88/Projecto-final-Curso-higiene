@@ -1,7 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
-import { Houses, User } from '../services/user';
+import { Cleaning, Houses, User } from '../services/user';
 import * as auth from 'firebase/auth';
-import {BehaviorSubject, defer, from, Observable, of, ReplaySubject} from "rxjs";
+import { BehaviorSubject, combineLatest, defer, forkJoin, from, Observable, of, ReplaySubject } from "rxjs";
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import {
   AngularFirestore,
@@ -10,6 +10,10 @@ import {
 import { ResolveStart, Router } from '@angular/router';
 import { delay, map, switchMap, take } from 'rxjs/operators';
 import { share } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 @Injectable({
   providedIn: 'root',
 })
@@ -17,6 +21,8 @@ export class AuthService {
 
   user$!: Observable<User | null | undefined>;
   dataPromise!: Promise<User>;
+  userTemp!: User;
+  app:any;
 
 
   constructor(
@@ -26,50 +32,39 @@ export class AuthService {
     public ngZone: NgZone // NgZone service to remove outside scope warning
   ) {
 
-    this.user$ =  this.afAuth.authState.pipe(switchMap((user) => {
-      if (user) {
-        return from(this.afs.doc<User>(`users/${user.uid}`).valueChanges());
-      } else {
-        return of(null);
-      }
+    //get user data from firestore conforme id após autenticação no authentication firebase
+    this.user$ = this.afAuth.authState.pipe(switchMap((user) => {
+      console.log(user?.uid)
+      return this.getUser(user).then(docArr => {
+        return docArr;
+      });
     }));
 
-    /* Saving user data in localstorage when 
-    logged in and setting up null when logged out */
-
-/*    this.user$ = this.afAuth.authState.pipe(switchMap((user) => {
-      if (user) {
-        const tempUser = defer(() => this.getUser(user)) as Observable<User | null | undefined>
-        tempUser.pipe(switchMap((user) => {
-          user?.roles
-        }));
-        return tempUser;
-      } else {
-        return of(null);
-      }
-    }));
-    console.log('AQUI --------> ')*/
+    this.user$.subscribe(user => {
+      if (user)
+        this.userTemp=user;
+    })
   }
 
-  async getUser(user: any): Promise<User | void> {
-    const docData = await this.afs.doc<User>(`users/${user.uid}`).get().toPromise()
-    .then((res) => {
-      return res?.data() as unknown as Promise<User>;
-    }).catch(err => {
-      console.log('something went wrong '+ err)
+
+  // get user devolve user na firestore as promise
+  async getUser(user: any): Promise<any> {
+    let itemsCollection = this.afs.doc<User>(`users/${user.uid}`).valueChanges();
+    return await new Promise((resolve, reject) => {
+      itemsCollection.subscribe((response: any) => {
+        resolve(response);
+      }, reject);
     });
-    return docData;
   }
 
 
-
-  // Sign in with email/password
+  // login
   SignIn(email: string, password: string) {
     return this.afAuth
       .signInWithEmailAndPassword(email, password)
       .then((result) => {
         this.ngZone.run(() => {
-          this.router.navigate(['dashboard']);
+            this.router.navigate(['dashboard'])
         });
         this.SetData(result.user);
       })
@@ -77,13 +72,15 @@ export class AuthService {
         window.alert(error.message);
       });
   }
-  // Sign up with email/password
-  SignUpUser(email: string, password: string) {
+  // criar registo para cliente
+  SignUpUser(email: string, password: string, nome: string) {
     return this.afAuth
       .createUserWithEmailAndPassword(email, password)
-      .then((result) => {
-        /* Call the SendVerificaitonMail() function when new user sign 
-        up and returns promise */
+      .then(async (result) => {
+        //adicionar nome ao authentication firebase
+        await result.user?.updateProfile({displayName: nome}).then(function() {
+        }, function(error) {
+        });
         this.SendVerificationMail();
         this.SetUserData(result.user);
       })
@@ -91,20 +88,29 @@ export class AuthService {
         window.alert(error.message);
       });
   }
-  SignUpWorker(email: string, password: string) {
-    return this.afAuth
+  // criar registo para worker
+  SignUpWorker(email: string, password: string, nome: string) {
+    if(!this.app){
+      this.app=firebase.initializeApp(environment.firebaseConfig,'secondary');
+    }
+    this.app.auth()
       .createUserWithEmailAndPassword(email, password)
-      .then((result) => {
+      .then(async (result:any) => {
         /* Call the SendVerificaitonMail() function when new user sign 
         up and returns promise */
-        this.SendVerificationMail();
-        this.SetWorkerData(result.user);
+        await result.user?.updateProfile({displayName: nome}).then(function() {
+          // Profile updated successfully!
+          // "Jane Q. User", hasn't changed.
+        }, function() {
+          // An error happened.
+        });
+        await this.SetWorkerData(result.user);
       })
-      .catch((error) => {
+      .catch((error: { message: any; }) => {
         window.alert(error.message);
       });
   }
-  // Send email verfificaiton when new user sign up
+  // enviar email confirmação após criar conta
   SendVerificationMail() {
     return this.afAuth.currentUser
       .then((u: any) => u.sendEmailVerification())
@@ -112,7 +118,7 @@ export class AuthService {
         this.router.navigate(['verify-email-address']);
       });
   }
-  // Reset Forggot password
+  // Resetar password
   ForgotPassword(passwordResetEmail: string) {
     return this.afAuth
       .sendPasswordResetEmail(passwordResetEmail)
@@ -123,12 +129,8 @@ export class AuthService {
         window.alert(error);
       });
   }
-  // Returns true when user is looged in and email is verified
 
-
-  /* Setting up user data when sign in with username/password, 
-  sign up with username/password and sign in with social auth  
-  provider in Firestore database using AngularFirestore + AngularFirestoreDocument service */
+  // guardar dados de cliente na firestore client
   SetUserData(user: any) {
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(
       `users/${user.uid}`
@@ -139,13 +141,13 @@ export class AuthService {
       displayName: user.displayName,
       photoURL: user.photoURL,
       emailVerified: user.emailVerified,
-      roles: {admin:false, client: true, worker:false },
+      roles: { admin: false, client: true, worker: false },
     };
     return userRef.set(data, {
       merge: true,
-    });
+    })
   }
-
+  // guardar dados de worker na firestore client
   SetWorkerData(user: any) {
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(
       `users/${user.uid}`
@@ -156,12 +158,15 @@ export class AuthService {
       displayName: user.displayName,
       photoURL: user.photoURL,
       emailVerified: user.emailVerified,
-      roles: {admin:false, client: false, worker: true },
+      roles: { admin: false, client: false, worker: true },
     };
     return userRef.set(data, {
       merge: true,
+    }).then(()=>{
+      window.location.reload();
     });
   }
+  // guardar dados de sign in no firestore
   async SetData(user: any) {
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(
       `users/${user.uid}`
@@ -176,50 +181,46 @@ export class AuthService {
     };
     return userRef.set(data, {
       merge: true,
+    })
+  }
+
+  // deletar trabalhador caso exista
+  deleteWorker(workerId: string) {
+    this.afs.doc(`users/${workerId}`).delete().then(() => {
+      console.log("Document successfully deleted!");
+    }).then(()=>{
+      window.location.reload();
+    }).catch((error) => {
+      console.error("Error removing document: ", error);
     });
   }
 
- 
-
-  // determines if user has matching role
-  private checkAuthorization(user: User, allowedRoles: string[]): boolean {
-    if (!user) {
-      return false;
-    }
-    for (const role of allowedRoles){
-    }
-    return false
+  // deletar marcação caso exista
+  deleteMarc(cleanId: string){
+    this.afs.doc(`cleaning/${cleanId}`).delete().then(() => {
+      console.log("Document successfully deleted!");
+    }).catch((error) => {
+      console.error("Error removing document: ", error);
+    });
   }
 
-  canAddWorkers(user: User): boolean {
-    const allowed = ['admin'];
-    return this.checkAuthorization(user, allowed);
+  // return observable contendo todas as marcações da coleção cleaning
+  getCleaningAdmin(): Observable<Cleaning[]>{
+    return this.afs.collection<Cleaning>(`cleaning`).valueChanges();
   }
 
-
-  getHouses() : Observable<Houses[]>{
-    return this.user$.pipe(map((user:any)=>{
-      console.log(user?.uid);
-      return user?.houses;
-    }));
+  // return observable contendo todos users da coleção users
+  getWorkersAdmin(): Observable<User[]> {
+    return this.afs.collection<User>(`users`).valueChanges();
   }
 
-
-  saveImage(){
-    
-  }
 
   // Sign out
   async SignOut() {
     await this.afAuth.signOut();
-    return this.router.navigate(['login']);
+    return this.router.navigate(['login']).then(()=>{
+      window.location.reload();
+    });
   }
 
 }
-/**      if(user){
-        this.userData = this.afs.doc(`users/${user.uid}/${user.houses}`).valueChanges();
-      }else{
-        this.userData = of(null);
-      }});
-      
-      */

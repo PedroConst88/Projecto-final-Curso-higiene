@@ -1,73 +1,170 @@
 <section>
   <div class="container">
-    <div>
-      <h1 class="h2">Add house details</h1>
+    <form #addHouse="ngForm">
+      <h1 style="margin-top: 20px; text-align: center;" class="h2">Adicionar casa</h1>
 
 
       <div class="form-row">
         <div class="col-md-12 mb-3">
-          <label for="validationCustom03">Name</label>
-          <input type="text" class="form-control" id="validationCustom01" placeholder="name"  [(ngModel)]="houses.name" #name required>
-          <div class="invalid-feedback">
-            Please provide a valid Name.
+          <label for="validationCustom03">Nome</label>
+          <input name="name" type="text" class="form-control" id="validationCustom01" placeholder="Nome" minlength="4" [ngModel]="houses.name" #name="ngModel" ngModel required>
+          <div *ngIf="name.touched && name.invalid" class="invalid-feedback d-block">
+            <div *ngIf="name.errors?.['required']">
+              Insira um nome válido
+            </div>
+            <div *ngIf="name.errors?.['minlength']">
+              Número minimo de caracteres não atingido
+            </div>
           </div>
         </div>
         <div class="col-md-12 mb-3">
-          <label for="validationCustom03">Size</label>
-          <input type="number" class="form-control" id="validationCustom02" placeholder="size" [(ngModel)]="houses.size" #size required>
-          <div class="invalid-feedback">
-            Please provide a valid size.
+          <label for="validationCustom03">Tamanho</label>
+          <input name="size" type="number" min="0" class="form-control" id="validationCustom02" minlength="2" placeholder="Tamanho" [ngModel]="houses.size" #size="ngModel" ngModel required>
+          <div *ngIf="size.touched && size.invalid" class="invalid-feedback d-block">
+            <div *ngIf="size.errors?.['required']">
+              Insira um valor válido
+            </div>
+            <div *ngIf="size.errors?.['minlength']">
+              Insira um valor válido
+            </div>
           </div>
         </div>
+        <div class="row">
         <div class="col-md-6 mb-3">
-          <label for="validationCustom03">Address</label>
-          <input type="text" class="form-control" id="validationCustom03" placeholder="address" [(ngModel)]="houses.address" #address required>
-          <div class="invalid-feedback">
-            Please provide a valid Address.
+          <label for="validationCustom03">Morada</label>
+          <input  name="address" type="text" class="form-control" id="validationCustom03" minlength="4" placeholder="Morada" [ngModel]="houses.address" #address="ngModel" ngModel required>
+          <div *ngIf="address.touched && address.invalid" class="invalid-feedback d-block">
+            <div *ngIf="address.errors?.['required']">
+              Insira uma morada válida
+            </div>
+            <div *ngIf="address.errors?.['minlength']">
+              Insira uma morada válida
+            </div>
           </div>
         </div>
         <div class="col-md-3 mb-3">
-          <label for="validationCustom04">city</label>
-          <input type="text" class="form-control" id="validationCustom04" placeholder="city" [(ngModel)]="houses.city" #city required>
-          <div class="invalid-feedback">
-            Please provide a city state.
+          <label for="validationCustom04">Cidade</label>
+          <input  name="city" type="text" class="form-control" id="validationCustom04" minlength="3" placeholder="Cidade" [ngModel]="houses.city" #city="ngModel" ngModel required>
+          <div *ngIf="city.touched && city.invalid" class="invalid-feedback d-block">
+            <div *ngIf="city.errors?.['required']">
+              Insira uma cidade válida
+            </div>
+            <div *ngIf="city.errors?.['minlength']">
+              Insira uma cidade válida
+            </div>
           </div>
         </div>
         <div class="col-md-3 mb-3">
-          <label for="validationCustom05">Zip</label>
-          <input type="number" class="form-control" id="validationCustom05" placeholder="Zip" [(ngModel)]="houses.postcode" #zip required>
-          <div class="invalid-feedback">
-            Please provide a valid zip.
+          <label for="validationCustom05">Código postal</label>
+          <input  name="zip" type="number" min="0" class="form-control" id="validationCustom05" minlength="2" placeholder="Código postal" [ngModel]="houses.postcode" #zip="ngModel" ngModel required>
+          <div *ngIf="zip.touched && zip.invalid" class="invalid-feedback d-block">
+            <div *ngIf="zip.errors?.['required']">
+              Insira um código postal válido válido
+            </div>
+            <div *ngIf="zip.errors?.['minlength']">
+              Insira um código postal válido válido
+            </div>
           </div>
         </div>
+      </div>
 
 
     </div>
     <div class="row">
       <div class="col-lg-6 col-md-6 col-sm-12">
-        <img src="/assets/housePlan.png" alt="HousePlan" />
+        <img src="/assets/planocasa.webp" alt="HousePlan" />
       </div>
-      <div class="col-lg-6 col-md-6 col-sm-12">
-        <div class="input-group mb-3">
-          <label for="validationCustom06">numRoom</label>
-          <input type="number" value="0" min="0" max="100" step="1" placeholder="numRoom" [(ngModel)]="houses.numRoom" #numRoom required/>
-          <label for="validationCustom07">numBath</label>
-          <input type="number" value="0" min="0" max="100" step="1" placeholder="numBath" [(ngModel)]="houses.numBath" #numBath required/>
-          <label for="validationCustom08">numKitchen</label>
-          <input type="number" value="0" min="0" max="100" step="1" placeholder="numKitchen" [(ngModel)]="houses.numKitchen" #numKitchen required/>
-          <label for="validationCustom09">numGarden</label>
-          <input type="number" value="0" min="0" max="100" step="1" placeholder="numGarden" [(ngModel)]="houses.numGarden" #numGarden required/>
-          <label for="validationCustom10">numLiving</label>
-          <input type="number" value="0" min="0" max="100" step="1" placeholder="numLiving" [(ngModel)]="houses.numLiving" #numLiving required/>
-          <label for="validationCustom11">numDining</label>
-          <input type="number" value="0" min="0" max="100" step="1" placeholder="numDining" [(ngModel)]="houses.numDining" #numDining required/>
-          <label for="validationCustom12">numGarage</label> 
-          <input type="number" value="0" min="0" max="100" step="1" placeholder="numGarage" [(ngModel)]="houses.numGarage" #numGarage required/>
+      <div class="col-lg-6 col-md-6 col-sm-12 part2">
+        <div class="input-group mb-3 list-group">
+          <div class="list-group-item">
+          <label for="validationCustom06">Número de quartos</label>
+          <input  name="numRoom" type="number" class="form-control" value="0" min="0" max="100" step="1" placeholder="Número de quartos" [ngModel]="houses.numRoom" ngModel #numRoom="ngModel" required/>
+          <div *ngIf="numRoom.touched && numRoom.invalid" class="invalid-feedback d-block">
+            <div *ngIf="numRoom.errors?.['required']">
+              Insira um valor válido
+            </div>
+            <div *ngIf="numRoom.errors?.['minlength']">
+              Insira um valor válido
+            </div>
+          </div>
         </div>
-        <button class="btn btn-lg btn-primary btn-block" style="background-color: #FFA07A;" type="submit" value="save" (click)="houseService.storeHouse(name.value, convertNumber(size.value), address.value, city.value, convertNumber(zip.value), convertNumber(numRoom.value), convertNumber(numBath.value), convertNumber(numKitchen.value), convertNumber(numGarden.value), convertNumber(numLiving.value), convertNumber(numDining.value), convertNumber(numGarage.value))">Guardar</button>
+        <div class="list-group-item">
+          <label for="validationCustom07">Número de casas de banho</label>
+          <input  name="numBath" type="number" class="form-control" value="0" min="0" max="100" step="1" placeholder="Número de casas de banho" [ngModel]="houses.numBath" ngModel #numBath="ngModel" required/>
+          <div *ngIf="numBath.touched && numBath.invalid" class="invalid-feedback d-block">
+            <div *ngIf="numBath.errors?.['required']">
+              Insira um valor válido
+            </div>
+            <div *ngIf="numBath.errors?.['minlength']">
+              Insira um valor válido
+            </div>
+          </div>
+        </div>
+        <div class="list-group-item">
+          <label for="validationCustom08">Número de cozinhas</label>
+          <input  name="numKitchen" type="number" class="form-control" value="0" min="0" max="100" step="1" placeholder="Número de cozinhas" [ngModel]="houses.numKitchen" ngModel #numKitchen="ngModel" required/>
+          <div *ngIf="numKitchen.touched && numKitchen.invalid" class="invalid-feedback d-block">
+            <div *ngIf="numKitchen.errors?.['required']">
+              Insira um valor válido
+            </div>
+            <div *ngIf="numKitchen.errors?.['minlength']">
+              Insira um valor válido
+            </div>
+          </div>
+        </div>
+        <div class="list-group-item">
+          <label for="validationCustom09">Número de jardins</label>
+          <input name="numGarden" type="number" class="form-control" value="0" min="0" max="100" step="1" placeholder="Número de jardins" [ngModel]="houses.numGarden" ngModel #numGarden="ngModel" required/>
+          <div *ngIf="numGarden.touched && numGarden.invalid" class="invalid-feedback d-block">
+            <div *ngIf="numGarden.errors?.['required']">
+              Insira um valor válido
+            </div>
+            <div *ngIf="numGarden.errors?.['minlength']">
+              Insira um valor válido
+            </div>
+          </div>
+        </div>
+        <div class="list-group-item">
+          <label for="validationCustom10">Número de salas de estar</label>
+          <input name="numLiving" type="number" class="form-control" value="0" min="0" max="100" step="1" placeholder="Número de salas de estar" [ngModel]="houses.numLiving" ngModel #numLiving="ngModel" required/>
+          <div *ngIf="numLiving.touched && numLiving.invalid" class="invalid-feedback d-block">
+            <div *ngIf="numLiving.errors?.['required']">
+              Insira um valor válido
+            </div>
+            <div *ngIf="numLiving.errors?.['minlength']">
+              Insira um valor válido
+            </div>
+          </div>
+        </div>
+        <div class="list-group-item">
+          <label for="validationCustom11">Número de salas de jantar</label>
+          <input name="numDining" type="number" class="form-control" value="0" min="0" max="100" step="1" placeholder="Número de salas de jantar" [ngModel]="houses.numDining" ngModel #numDining="ngModel" required/>
+          <div *ngIf="numDining.touched && numDining.invalid" class="invalid-feedback d-block">
+            <div *ngIf="numDining.errors?.['required']">
+              Insira um valor válido
+            </div>
+            <div *ngIf="numDining.errors?.['minlength']">
+              Insira um valor válido
+            </div>
+          </div>
+        </div>
+        <div class="list-group-item">
+          <label for="validationCustom12">Número de garagens</label> 
+          <input name="numGarage" type="number" class="form-control" value="0" min="0" max="100" step="1" placeholder="Número de garagens" [ngModel]="houses.numGarage" ngModel #numGarage="ngModel" required/>
+          <div *ngIf="numGarage.touched && numGarage.invalid" class="invalid-feedback d-block">
+            <div *ngIf="numGarage.errors?.['required']">
+              Insira um valor válido
+            </div>
+            <div *ngIf="numGarage.errors?.['minlength']">
+              Insira um valor válido
+            </div>
+          </div>
+        </div>
+        </div>
+        <button class="btn btn-lg btn-secondary btn-block" style="background-color: #8f887c;" type="submit" value="save" [disabled]="!addHouse.valid" (click)="houseService.storeHouse(name.value, convertNumber(size.value), address.value, city.value, convertNumber(zip.value), convertNumber(numRoom.value), convertNumber(numBath.value), convertNumber(numKitchen.value), convertNumber(numGarden.value), convertNumber(numLiving.value), convertNumber(numDining.value), convertNumber(numGarage.value))">Guardar</button>
 
       </div>
     </div>
-  </div>
+  </form>
 </div>
 </section>

@@ -1,20 +1,59 @@
-<section class="text-white">
-  <div class="container-fluid" style="background-image: url(../../assets/backgroundLogin.png);">
-      <div class="container authBlock">
-              <div class="form-signin">
-                  <h1 class="h3 mb-3 font-weight-normal">Please sign up worker</h1>
-                  <label for="inputEmail" class="sr-only">Email address</label>
-                  <input type="email" id="inputEmail" class="form-control" placeholder="Email address" #userEmail required>
-                  <label for="inputPassword" class="sr-only">Password</label>
-                  <input type="password" id="inputPassword" class="form-control" placeholder="Password" #userPwd required>
-                  <div class="checkbox mb-3">
-                    <label>
-                      <input type="checkbox" value="remember-me"> Remember me
-                    </label>
-                  </div>
-                  <button class="btn btn-lg btn-primary btn-block" style="background-color: #FFA07A;" type="submit" value="Log in" (click)="authService.SignUpWorker(userEmail.value, userPwd.value)">Sign in</button>
-                  <p class="mt-5 mb-3 text-muted">&copy; 2017-2018</p>
-                </div>
-           </div>
+<section>
+  <h1>
+   Funcionário
+  </h1>
+  <div class="container text-black">
+    <div>
+        <button class="btn btn-primary float-right" style="background-color: #8f887c;" (click) ="toggle()" [ngStyle]="{'display' : !showFirst ? 'initial' : 'none'}">
+          Adicionar
+        </button>
+        <div class="formData form-signin" [ngStyle]="{'display' : showFirst ? 'initial' : 'none' }">
+          <i class="material-icons " (click) ="toggle()" [ngStyle]="{'display' : showFirst ? 'initial' : 'none'}">close</i>
+          <h2 class="mb-3 font-weight-normal">Adicionar trabalhador</h2>
+          <label for="inputEmail" class="sr-only">Nome</label>
+          <input type="name" id="inputName" class="form-control" placeholder="Name" #name required>
+          <label for="inputEmail" class="sr-only">Email address</label>
+          <input type="email" id="inputEmail" class="form-control" placeholder="Email address" #userEmail required>
+          <label for="inputPassword" class="sr-only">Password</label>
+          <input type="password" id="inputPassword" class="form-control" placeholder="Password" #userPwd required>
+          <button class="btn btn-lg btn-primary" style="background-color: #8f887c;margin-top: 20px;" type="submit" value="Log in" (click)="authService.SignUpWorker(userEmail.value, userPwd.value,name.value)">Adicionar</button>
+        </div>
+      </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Nome</th>
+          <th scope="col">Email</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let worker of workersList | async">
+          <td>{{worker.displayName}}</td>
+          <td>{{worker.email}}</td>
+          <td><button (click) ="toggle2(worker.uid)" data-toggle="modal" data-target="#exampleModal">Delete</button></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </section>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Confirmação</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Tem a certeza que pretende eliminar trabalhador?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="deleteWorker()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>

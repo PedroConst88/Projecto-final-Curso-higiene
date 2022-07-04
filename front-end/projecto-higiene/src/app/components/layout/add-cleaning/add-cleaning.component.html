@@ -1,43 +1,90 @@
-
+<form #myForm="ngForm" (ngSubmit)="addEvent(myForm)">
   <div class="form-row">
     <h1 class="h3 mb-3 font-weight-normal">Adicionar marcação</h1>
     <div class="col-12">
-    <label for="title">Título: </label>
-    <input id="title" type="text" placeholder="title" #title>
+      <label for="title">Título: </label>
+      <input #title="ngModel" required id="title" name="title" type="text" placeholder="title" class="form-control" ngModel>
+    </div>
+
+    <div class="col-12">
+      <label for="house">Selecionar casa</label>
+      <mat-form-field appearance="fill">
+        <mat-select #house required class="form-control" name="house" ngModel>
+          <mat-option *ngFor="let house of houses | async " value="{{house.hid}}">{{house.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+    <div class="col-12">
+      <label for="date">Data: </label>
+      <input id="date" name="date" (change)="onDateChange(date.value)" class="form-control" type="text" mwlFlatpickr
+        [altInput]="true" [enableTime]="false" minDate="today" dateFormat="Y-m-d"
+        altFormat="F j, Y " placeholder="time" #date required ngModel/>
+    </div>
+
+    <div class="col-12">
+      <label for="time">Selecionar tempo</label>
+      <mat-form-field appearance="fill">
+        <mat-select #time required class="form-control" name="time" enableTime="true" dateFormat="HH:mm" placeholder="Selected time"
+          [(ngModel)]="timeControl" minlength="2" maxlength="9" ngModel>
+          <mat-option *ngFor="let time of timeobser | async " value="{{time}}">{{time}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
     </div>
     <div class="col-12">
-    <label for="time">Data: </label>
-    <input
-    class="form-control"
-    type="text"
-    mwlFlatpickr
-    [altInput]="true"
-    [convertModelValue]="true"
-    [enableTime]="false"
-    minDate="today"
-    dateFormat="Y-m-dTH:i"
-    altFormat="F j, Y H:i"
-    placeholder="time"
-    #time/>
-</div>
-<div class="col-12">
-  <label for="time">Horário: </label>
-  <input
-  class="form-control"
-  type="text"
-  mwlFlatpickr
-  [altInput]="true"
-  [convertModelValue]="true"
-  [enableTime]="true"
-  minDate="today"
-  dateFormat="Y-m-dTH:i"
-  altFormat="F j, Y H:i"
-  placeholder="time"
-  #time/>
-</div>
-<div class="col-12">
-    <label for="notes">Notas: </label>
-    <input id="notes" type="text" placeholder="notes" #notes>
-</div>
-    <button class="btn btn-lg btn-primary btn-block" style="background-color: #FFA07A;" type="submit" value="SubmitCleaning" (click)="addEvent(title.value,time.value,notes.value);">Adicionar</button>
+      <label for="notes">Notas: </label>
+      <textarea id="notes" class="form-control" name="notes" type="text" placeholder="notes" rows="3" #notes ngModel></textarea>
+    </div>
+    <button class="btn btn-lg btn-primary" style="background-color: #8f887c;float: right; margin-top: 20px;" type="submit"
+      value="SubmitCleaning" [disabled]="!myForm.valid">Adicionar</button>
   </div>
+</form>
+<!--
+<form class="form-horizontal" [formGroup]="form">
+
+  <div class="form-group">
+    <div class="col-sm-12">
+      <label for="name" class="control-label required">Name</label>
+      <input type="text" id="name" class="form-control" formControlName="name">
+      <app-field-error-display 
+        [displayError]="isFieldValid('name')" 
+        errorMsg="Please inform your name">
+      </app-field-error-display>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-12">
+      <label for="name" class="control-label required">Name</label>
+      <input type="text" id="name" class="form-control" formControlName="name">
+      <app-field-error-display 
+        [displayError]="isFieldValid('name')" 
+        errorMsg="Please inform your name">
+      </app-field-error-display>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-12">
+      <label for="name" class="control-label required">Name</label>
+      <input type="text" id="name" class="form-control" formControlName="name">
+      <app-field-error-display 
+        [displayError]="isFieldValid('name')" 
+        errorMsg="Please inform your name">
+      </app-field-error-display>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-12">
+      <label for="name" class="control-label required">Name</label>
+      <input type="text" id="name" class="form-control" formControlName="name">
+      <app-field-error-display 
+        [displayError]="isFieldValid('name')" 
+        errorMsg="Please inform your name">
+      </app-field-error-display>
+    </div>
+  </div>
+
+  <button class="btn btn-primary">Submit</button>
+</form>
+-->

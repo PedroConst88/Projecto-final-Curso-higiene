@@ -15,29 +15,26 @@ export class HouseService {
   userid!: string;
   loadedHouse!: Houses;
 
-  constructor(auth: AuthService, public afs: AngularFirestore, // Inject Firestore service
-    public afAuth: AngularFireAuth, // Inject Firebase auth service
+  constructor(public auth: AuthService, public afs: AngularFirestore,
+    public afAuth: AngularFireAuth, 
     public router: Router,public ngZone: NgZone) {
       
-    auth.user$.subscribe(user => {
-      if (user)
-        this.userid = user.uid
-    })
+      this.userid=auth.userTemp.uid;
 
   }
 
+  //return casas associadas ao cliente
   getHousesList(): Observable<Houses[]> {
-    console.log('GET HOUSE '+this.userid)
     return this.afs.collection<Houses>(`houses`, ref => ref.where('owner', '==', this.userid)).valueChanges();
   }
 
+  //return dos dados da casa selecionada para editar
   loadHouse(houses: Houses){
     this.loadedHouse=houses;
-    console.log('loadhouse'+houses.hid);
     return this.router.navigate(['add-house']);
   }
 
-
+  //guardar casa caso não exista registo da mesma caso contrário atualiza os dados alterados
   storeHouse(name: string, size: number, address: string, city: string, zip: number, numRoom: number, numBath: number, numKitchen: number, numGarden: number, numLiving: number, numDining: number, numGarage: number){
     if(this.loadedHouse.hid==''){
       this.SaveHouse(name, size, address, city, zip, numRoom, numBath, numKitchen, numGarden, numLiving, numDining, numGarage);
@@ -45,6 +42,8 @@ export class HouseService {
       this.UpdateHouse(name, size, address, city, zip, numRoom, numBath, numKitchen, numGarden, numLiving, numDining, numGarage);
     }
   }
+
+  //atualiza casa acede ao documento da casa alterada e atualiza os dados
   UpdateHouse(name: string, size: number, address: string, city: string, zip: number, numRoom: number, numBath: number, numKitchen: number, numGarden: number, numLiving: number, numDining: number, numGarage: number) {
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(
       `houses/${this.loadedHouse.hid}`);
@@ -70,7 +69,7 @@ export class HouseService {
   }
 
 
-
+  //guarda nova casa conforme os dados inseridos
   SaveHouse(name: string, size: number, address: string, city: string, zip: number, numRoom: number, numBath: number, numKitchen: number, numGarden: number, numLiving: number, numDining: number, numGarage: number) {
     const id = this.afs.createId();
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(
@@ -98,6 +97,7 @@ export class HouseService {
     
   }
 
+  //se casa com o id recebido existir esta elimina a casa
   deleteHouse(hid:string){
     this.afs.doc(`houses/${hid}`).delete().then(() => {
       console.log("Document successfully deleted!");

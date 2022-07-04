@@ -17,7 +17,7 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
       return this.authService.user$.pipe(
         take(1),
-       map(user => user? true:false),
+       map(user => user ? true:false),
         tap(isLogin =>{
           if (!isLogin){
             console.error('Access denied-Logged-in only')

@@ -15,6 +15,7 @@ import {
   isSameDay,
   isSameMonth,
   addHours,
+  subHours
 } from 'date-fns';
 import { Observable, Subject } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -27,6 +28,10 @@ import {
 import { CleaningService } from 'src/app/shared/services/cleaning.service';
 import { Cleaning } from 'src/app/shared/services/user';
 import { DatePipe } from '@angular/common';
+
+import { registerLocaleData } from '@angular/common';
+import localePt from '@angular/common/locales/pt-PT';
+registerLocaleData(localePt);
 
 
 const colors: any = {
@@ -46,13 +51,15 @@ const colors: any = {
 
 @Component({
   selector: 'app-dashboard',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+ // changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
 
+  cleaningTemp!:Observable<Cleaning[]>;
   public showFirst:boolean = false;
+  //esconder menu de adicionar conforme click no botao adicionar
   toggle() { 
     this.showFirst = !this.showFirst; 
   }
@@ -72,54 +79,35 @@ export class DashboardComponent implements OnInit {
     event: CalendarEvent;
   };
 
-  actions: CalendarEventAction[] = [
-    {
-      label: '<i class="fas fa-fw fa-pencil-alt"></i>',
-      a11yLabel: 'Edit',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.handleEvent('Edited', event);
-      },
-    },
-    {
-      label: '<i class="fas fa-fw fa-trash-alt"></i>',
-      a11yLabel: 'Delete',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.events = this.events.filter((iEvent) => iEvent !== event);
-        this.handleEvent('Deleted', event);
-      },
-    },
-  ];
-
   refresh = new Subject<void>();
 
-  events: CalendarEvent[] = [
-  
-  ];
+  events: CalendarEvent[] = [];
 
   activeDayIsOpen: boolean = true;
 
   constructor(public authService: AuthService, private modal: NgbModal, public cleaningService: CleaningService,private datePipe: DatePipe) { }
 
+  //load marcações
   ngOnInit(): void {
-    setTimeout(() => 
-    {
-    this.cleaningService.getCleaning().subscribe(data => {
-      for(var i = 0; i < data.length; i++){
-        this.events = [
-          ...this.events,
-          {
-            title: data[i].name,
-            start: data[i].start.toDate(),
-            end: data[i].end.toDate(),
-            color!: colors.red.primary,
-            actions: this.actions,
-          },
-        ];
-      }
-    });
-  },
-  1000);
+      this.events = [];
+      this.cleaningService.getCleaning().subscribe(data => {
+        for(var i = 0; i < data.length; i++){
+          this.events = [
+            ...this.events,
+            {
+              title: data[i].name,
+              id:data[i].cid,
+              start: addHours((new Date(data[i].dateClean+'T'+data[i].start+'')),1),
+              end: addHours((new Date (data[i].dateClean+'T'+data[i].end)),1),
+              color!: colors.red.primary,
+            },
+          ];
+        }
+      });
+
   }
+
+  
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
@@ -156,29 +144,6 @@ export class DashboardComponent implements OnInit {
   handleEvent(action: string, event: CalendarEvent): void {
     this.modalData = { event, action };
     this.modal.open(this.modalContent, { size: 'lg' });
-  }
-
-  addEvent(): void {
-
-
-    this.events = [
-      ...this.events,
-      {
-        title: 'New event',
-        start: startOfDay(new Date()),
-        end: endOfDay(new Date()),
-        color!: colors.red.primary,
-        draggable: true,
-        resizable: {
-          beforeStart: true,
-          afterEnd: true,
-        },
-      },
-    ];
-  }
-
-  deleteEvent(eventToDelete: CalendarEvent) {
-    this.events = this.events.filter((event) => event !== eventToDelete);
   }
 
   setView(view: CalendarView) {

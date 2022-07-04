@@ -1,4 +1,5 @@
 import { Component, Injectable, NgZone, OnInit } from '@angular/core';
+import { Console } from 'console';
 import { delay, Observable } from 'rxjs';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { HouseService } from 'src/app/shared/services/house.service';
@@ -19,12 +20,9 @@ export class ProfileComponent implements OnInit {
   constructor(public authService: AuthService, public houseService: HouseService, public ngZone: NgZone) { }
 
 
+  //load casas do cliente
   ngOnInit(): void {
-    setTimeout(() => 
-    {
-      this.houses = this.houseService.getHousesList();
-    },
-    1000);
+    this.houses = this.houseService.getHousesList();
     const data: Houses = {
       owner: '',
       hid: '',

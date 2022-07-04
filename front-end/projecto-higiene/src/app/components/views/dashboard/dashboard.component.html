@@ -11,14 +11,14 @@
         [(viewDate)]="viewDate"
         (viewDateChange)="closeOpenMonthViewDay()"
       >
-        Previous
+        Anterior
       </div>
       <div
-        class="btn btn-outline-secondary"
+        class="btn  btn-primary"
         mwlCalendarToday
         [(viewDate)]="viewDate"
       >
-        Today
+        Hoje
       </div>
       <div
         class="btn btn-primary"
@@ -27,12 +27,12 @@
         [(viewDate)]="viewDate"
         (viewDateChange)="closeOpenMonthViewDay()"
       >
-        Next
+        Seguinte
       </div>
     </div>
   </div>
   <div class="col-md-4">
-    <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+    <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'pt-PT' }}</h3>
   </div>
   <div class="col-md-4">
     <div class="btn-group">
@@ -41,21 +41,21 @@
         (click)="setView(CalendarView.Month)"
         [class.active]="view === CalendarView.Month"
       >
-        Month
+        Mês
       </div>
       <div
         class="btn btn-primary"
         (click)="setView(CalendarView.Week)"
         [class.active]="view === CalendarView.Week"
       >
-        Week
+        Semana
       </div>
       <div
         class="btn btn-primary"
         (click)="setView(CalendarView.Day)"
         [class.active]="view === CalendarView.Day"
       >
-        Day
+        Dia
       </div>
     </div>
   </div>
@@ -94,35 +94,35 @@
 </div>
 </div>
 
+<div *ngIf="(authService.user$ | async) as user" class="col-3">
 
-
-<div class="col-3">
-<h3>
-  Edit events
-  <button class="btn btn-primary float-right" (click) ="toggle()" [ngStyle]="{'display' : !showFirst ? 'initial' : 'none'}">
-    Add new
-  </button>
+<div *ngIf="user.roles.client">
+  <div  (click) ="toggle()" [ngStyle]="{'display' : !showFirst ? 'initial' : 'none'}">
+  <h3>
+    Adicionar Marcação
+  </h3>
+  <div class="col text-center">
+    <button id="addMarcacao" class="btn btn-primary float-right">Adicionar</button>
+  </div>
+</div>
   <app-add-cleaning [ngStyle]="{'display' : showFirst ? 'initial' : 'none' }">2 element</app-add-cleaning>
 
   <div class="clearfix"></div>
-</h3>
-
 </div>
+</div>
+
+
 </div>
 </div>
 <!--
 <ng-template #modalContent let-close="close">
   <div class="modal-header">
-    <h5 class="modal-title">Event action occurred</h5>
+    <h5 class="modal-title">Dados Marcação</h5>
     <button type="button" class="close" (click)="close()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <div>
-      Action:
-      <pre>{{ modalData?.action }}</pre>
-    </div>
     <div>
       Event:
       <pre>{{ modalData?.event | json }}</pre>

@@ -30,9 +30,12 @@ export interface User {
 export interface Cleaning {
     cid: string;
     clientid: string;
+    hid:string;
     name: string;
     notes:string;
     workerid:string;
-    start: Date;
-    end: Date;
+    dateAsDate:Date;
+    dateClean:string;
+    start: string;
+    end: string;
 }

@@ -1,22 +1,28 @@
-<div class="displayTable">
-    <div class="displayTableCell">
-      <div class="authBlock">
-        <h3>Thank You for Registering</h3>
-        <div class="formGroup" *ngIf="authService.user$ | async as user">
-          <p class="text-center">We have sent a confirmation email to <strong>{{user.email}}</strong>.</p>
-          <p class="text-center">Please check your email and click on the link to verfiy your email address.</p>
-        </div>
-        
-        <!-- Calling SendVerificationMail() method using authService Api -->
-        <div class="formGroup">
-          <button type="button" class="btn btnPrimary" (click)="authService.SendVerificationMail()">
-            <i class="fas fa-redo-alt"></i>
-            Resend Verification Email
-          </button>
-        </div>
-      </div>
-      <div class="redirectToLogin">
-        <span>Go back to?<span class="redirect" routerLink="/login"> Sign in</span></span>
-      </div>
+
+
+  <section class="text-white">
+    <div class="container-fluid" style="background-image: url(../../assets/backgroundLogin.png);">
+        <div class="container authBlock">
+
+          <div class="authBlock">
+            <h1 class="mb-3">Obrigado por se registar!</h1>
+            <div class="formGroup mb-5" *ngIf="authService.user$ | async as user">
+              <p class="text-center">Foi enviado um email para <strong>{{user.email}}</strong>.</p>
+              <p class="text-center">Por favor verifique o seu email.</p>
+            </div>
+            
+            <!-- Calling SendVerificationMail() method using authService Api -->
+            <div class="formGroup">
+              <button style="background-color: #8f887c; border: 0px;" type="button" class="btn btnPrimary text-white mb-2" (click)="authService.SendVerificationMail()">
+                <i class="fas fa-redo-alt"></i>
+                Reenviar confirmação por email
+              </button>
+            </div>
+          </div>
+                
+             </div>
+             <div class="redirectToLogin">
+              <span>Retroceder?<span class="redirect btn-link" routerLink="/login"> Sign in</span></span>
+            </div>
     </div>
-  </div>
+</section>

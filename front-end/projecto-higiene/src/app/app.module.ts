@@ -29,7 +29,7 @@ import { ListHousesComponent } from './components/views/list-houses/list-houses.
 import { CardHousesComponent } from './components/layout/card-houses/card-houses.component';
 import {MatCardModule} from '@angular/material/card';
 import { FlexLayoutModule } from "@angular/flex-layout";
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule,FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -41,6 +41,11 @@ import { FlatpickrModule } from 'angularx-flatpickr';
 import { CleaningService } from './shared/services/cleaning.service';
 import { HouseService } from './shared/services/house.service';
 import { AddCleaningComponent } from './components/layout/add-cleaning/add-cleaning.component';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatSelectModule} from '@angular/material/select';
+import { GerirMarcacoesComponent } from './components/views/gerir-marcacoes/gerir-marcacoes.component';
+import { ClientGuard } from './shared/guard/client.guard';
+import { WorkerGuard } from './shared/guard/worker.guard';
 
 
 @NgModule({
@@ -60,6 +65,7 @@ import { AddCleaningComponent } from './components/layout/add-cleaning/add-clean
     ListHousesComponent,
     CardHousesComponent,
     AddCleaningComponent,
+    GerirMarcacoesComponent,
   ],
   imports: [
     BrowserModule,
@@ -74,6 +80,9 @@ import { AddCleaningComponent } from './components/layout/add-cleaning/add-clean
     FormsModule,
     NgbModalModule,
     BrowserAnimationsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    ReactiveFormsModule,
     FlatpickrModule.forRoot(),
     CalendarModule.forRoot({
       provide: DateAdapter,
@@ -88,7 +97,9 @@ import { AddCleaningComponent } from './components/layout/add-cleaning/add-clean
     CleaningService,
     AuthService,
     HouseService,
-    AdminGuard
+    AdminGuard,
+    ClientGuard,
+    WorkerGuard,
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   bootstrap: [AppComponent]

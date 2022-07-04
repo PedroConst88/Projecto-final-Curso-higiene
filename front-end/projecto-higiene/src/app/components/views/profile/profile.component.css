@@ -1,8 +1,12 @@
 .card-body{
-    height: 250px;
-    background-color: #6e6e6e;
     border-radius: 5%;
+    border:none;
 }
 .card{
     border:none;
+}
+button{
+    background-color: #8f887c;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }

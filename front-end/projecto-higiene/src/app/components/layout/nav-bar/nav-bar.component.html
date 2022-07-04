@@ -10,14 +10,20 @@
       <img src="../../assets/logo.png" alt="">
     </a>
   </ng-template>
-
-  <ul class="navbar-nav ml-auto">
+<div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+  <ul class="navbar-nav ms-auto">
   <div *ngIf="(authService.user$ | async) as user else loading">
+    <li *ngIf="user" class="nav-item">
+      <a class="nav-link text-white" (click)="authService.SignOut()">Log out</a>
+    </li>
     <li *ngIf="user.roles.client" class="nav-item">
       <a class="nav-link text-white" routerLink="/profile">Perfil</a>
     </li>
-    <li *ngIf="user.roles.client" class="nav-item">
-      <a class="nav-link text-white" (click)="authService.SignOut()">Log out</a>
+    <li *ngIf="user.roles.admin" class="nav-item">
+      <a class="nav-link text-white" routerLink="/workers">Workers</a>
+    </li>
+    <li *ngIf="user.roles.admin" class="nav-item">
+      <a class="nav-link text-white" routerLink="/marcacoes">Marcações</a>
     </li>
   </div>
   <ng-template #loading>
@@ -26,6 +32,7 @@
     </li>
   </ng-template>
 </ul>
+</div>
 
 
 </nav>

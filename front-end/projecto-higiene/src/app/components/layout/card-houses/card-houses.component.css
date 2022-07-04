@@ -1,0 +1,31 @@
+mat-card{
+    height: 150px;
+    background-color: #5f9ea075;
+    padding: 0px;
+    margin: 5px;
+}
+h2{
+    font-size: 24px;
+    display: inline-block;
+    margin: auto;
+    margin-left: 50px;
+}
+mat-card-content{
+    min-height: 100%;
+    min-width: 100%;
+}
+.content{
+    min-height: 100%;
+    line-height: 150px;
+    text-align: center;
+    width: 100%;
+}
+i{
+    top: 0%;
+    float: right;
+    color: #000000;
+    font-size: 40px;
+}
+.btn-primary{
+    background-color: #8f887c;
+}
